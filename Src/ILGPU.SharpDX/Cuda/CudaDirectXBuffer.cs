@@ -23,7 +23,7 @@ namespace ILGPU.SharpDX.Cuda
     /// </summary>
     /// <typeparam name="T">The element type.</typeparam>
     public sealed class CudaDirectXBuffer<T> : DirectXBuffer<T>, ICudaDirectXBuffer
-        where T : struct
+        where T : unmanaged
     {
         #region Instance
 

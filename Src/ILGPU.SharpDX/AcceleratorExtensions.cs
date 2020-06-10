@@ -12,6 +12,7 @@
 using ILGPU.Runtime;
 using ILGPU.Runtime.CPU;
 using ILGPU.Runtime.Cuda;
+using ILGPU.Runtime.OpenCL;
 using ILGPU.SharpDX.CPU;
 using ILGPU.SharpDX.Cuda;
 using SharpDX.Direct3D11;
@@ -41,6 +42,11 @@ namespace ILGPU.SharpDX
             public DirectXInteropAccelerator CreateCudaExtension(CudaAccelerator accelerator)
             {
                 return new CudaDirectXAccelerator(accelerator, D3DDevice);
+            }
+
+            public DirectXInteropAccelerator CreateOpenCLExtension(CLAccelerator accelerator)
+            {
+                throw new NotImplementedException();
             }
         }
 

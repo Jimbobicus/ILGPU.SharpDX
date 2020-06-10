@@ -22,7 +22,7 @@ namespace ILGPU.SharpDX
     /// Represents a 2D texture with ILGPU interop.
     /// Note that this texture can also be used as render target.
     /// </summary>
-    public abstract class DirectXTexture2D : DirectXBuffer
+    public abstract class DirectXTexture2DArray : DirectXBuffer
     {
         #region Static
 
@@ -31,7 +31,7 @@ namespace ILGPU.SharpDX
             if (texture == null)
                 throw new ArgumentNullException(nameof(texture));
             var desc = texture.Description;
-            return desc.Width * desc.Height;
+            return desc.Width * desc.Height * desc.ArraySize;
         }
 
         #endregion
@@ -49,7 +49,7 @@ namespace ILGPU.SharpDX
         /// <param name="texture">The width.</param>
         /// <param name="bufferFlags">The used buffer flags.</param>
         /// <param name="viewFlags">The used view flags.</param>
-        protected DirectXTexture2D(
+        protected DirectXTexture2DArray(
             Accelerator accelerator,
             Device d3dDevice,
             Texture2D texture,
@@ -99,9 +99,19 @@ namespace ILGPU.SharpDX
         public int Height { get; }
 
         /// <summary>
+        /// Returns texture array dimension.
+        /// </summary>
+        public int ArraySize { get; }
+
+        /// <summary>
         /// Returns the size of the texture as Index2.
         /// </summary>
         public Index2 Size => new Index2(Width, Height);
+
+        /// <summary>
+        /// Returns the size of the texture as Index3.
+        /// </summary>
+        public Index3 SizeWithArray => new Index3(Width, Height, ArraySize);
 
         /// <summary>
         /// Returns the DX format of the interop texture.
@@ -126,9 +136,22 @@ namespace ILGPU.SharpDX
         /// </summary>
         /// <typeparam name="T">The element type.</typeparam>
         /// <returns>The created array view pointing to this texture.</returns>
-        public ArrayView2D<T> GetView<T>()
+        public ArrayView2D<T> GetViewSlice<T>(int slice)
+            where T : unmanaged
+        {
+            int sliceStart = Width * Height * slice;
+            return GetLinearView<T>().GetSubView(sliceStart, Width * Height).As2DView(Width, Height);
+        }
+        
+
+        /// <summary>
+        /// Returns an array view pointing to this texture.
+        /// </summary>
+        /// <typeparam name="T">The element type.</typeparam>
+        /// <returns>The created array view pointing to this texture.</returns>
+        public ArrayView3D<T> GetViewAll<T>()
             where T : unmanaged =>
-            GetLinearView<T>().As2DView(Width, Height);
+            GetLinearView<T>().As3DView(Width, Height, ArraySize);
 
         #endregion
 

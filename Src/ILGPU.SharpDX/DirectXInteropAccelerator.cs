@@ -70,7 +70,7 @@ namespace ILGPU.SharpDX
         /// <returns>The created DX buffer.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "The type parameter is required")]
         protected Buffer CreateDXBuffer<T>(int numElements)
-            where T : struct
+            where T : unmanaged
         {
             return CreateDXBuffer(numElements, DirectXBuffer<T>.ElementSize);
         }
@@ -106,7 +106,7 @@ namespace ILGPU.SharpDX
         /// <param name="numElements">The number of elements in the buffer.</param>
         /// <returns>The created DX-compatible buffer.</returns>
         public DirectXBuffer<T> CreateBuffer<T>(int numElements)
-            where T : struct
+            where T : unmanaged
         {
             return CreateBuffer<T>(numElements, DirectXBufferFlags.DisposeBuffer);
         }
@@ -119,7 +119,7 @@ namespace ILGPU.SharpDX
         /// <param name="bufferFlags">The buffer flags to use.</param>
         /// <returns>The created DX-compatible buffer.</returns>
         public DirectXBuffer<T> CreateBuffer<T>(int numElements, DirectXBufferFlags bufferFlags)
-            where T : struct
+            where T : unmanaged
         {
             return CreateBuffer<T>(numElements, bufferFlags, DirectXViewFlags.None);
         }
@@ -136,7 +136,7 @@ namespace ILGPU.SharpDX
             int numElements,
             DirectXBufferFlags bufferFlags,
             DirectXViewFlags viewFlags)
-            where T : struct
+            where T : unmanaged
         {
             return CreateBuffer<T>(
                 CreateDXBuffer<T>(numElements),
@@ -151,7 +151,7 @@ namespace ILGPU.SharpDX
         /// <param name="buffer">The target DX buffer.</param>
         /// <returns>The created DX-compatible buffer.</returns>
         public DirectXBuffer<T> CreateBuffer<T>(Buffer buffer)
-            where T : struct
+            where T : unmanaged
         {
             return CreateBuffer<T>(buffer, DirectXBufferFlags.None);
         }
@@ -164,7 +164,7 @@ namespace ILGPU.SharpDX
         /// <param name="bufferFlags">The buffer flags to use.</param>
         /// <returns>The created DX-compatible buffer.</returns>
         public DirectXBuffer<T> CreateBuffer<T>(Buffer buffer, DirectXBufferFlags bufferFlags)
-            where T : struct
+            where T : unmanaged
         {
             return CreateBuffer<T>(buffer, bufferFlags, DirectXViewFlags.None);
         }
@@ -181,7 +181,7 @@ namespace ILGPU.SharpDX
             Buffer buffer,
             DirectXBufferFlags bufferFlags,
             DirectXViewFlags viewFlags)
-            where T : struct;
+            where T : unmanaged;
 
         #endregion
 

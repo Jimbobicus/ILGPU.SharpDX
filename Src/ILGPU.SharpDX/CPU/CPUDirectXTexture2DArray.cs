@@ -21,7 +21,7 @@ namespace ILGPU.SharpDX.CPU
     /// <summary>
     /// Represents a DX-compatible CPU texture.
     /// </summary>
-    public sealed class CPUDirectXTexture2D : DirectXTexture2D, ICPUDirectXBuffer
+    public sealed class CPUDirectXTexture2DArray : DirectXTexture2DArray, ICPUDirectXBuffer
     {
         #region Instance
 
@@ -37,7 +37,7 @@ namespace ILGPU.SharpDX.CPU
         /// <param name="texture">The target DX texture.</param>
         /// <param name="bufferFlags">The used buffer flags.</param>
         /// <param name="viewFlags">The used view flags.</param>
-        internal CPUDirectXTexture2D(
+        internal CPUDirectXTexture2DArray(
             CPUAccelerator accelerator,
             Device d3dDevice,
             Texture2D texture,
@@ -48,7 +48,7 @@ namespace ILGPU.SharpDX.CPU
             var desc = texture.Description;
             var stagingDesc = new Texture2DDescription()
             {
-                ArraySize = 1,
+                ArraySize = desc.ArraySize,
                 MipLevels = 1,
                 Format = desc.Format,
                 OptionFlags = ResourceOptionFlags.None,
