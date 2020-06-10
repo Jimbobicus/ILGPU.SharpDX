@@ -57,6 +57,17 @@ namespace ILGPU.SharpDX.Cuda
         public CudaArrayFormat arrayFormat;
         public int numChannels;
     }
+    
+
+    [StructLayout(LayoutKind.Sequential)]
+    struct CudaArray3DDescriptor
+    {
+        public IntPtr width;
+        public IntPtr height;
+        public IntPtr depth;
+        public CudaArrayFormat arrayFormat;
+        public int numChannels;
+    }
 
     enum CudaMemoryType
     {
@@ -89,6 +100,36 @@ namespace ILGPU.SharpDX.Cuda
 
         public IntPtr WidthInBytes;
         public IntPtr Height;
+    }
+
+    struct CudaMemcpy3DArgs
+    {
+        public IntPtr  Depth;
+        public IntPtr  Height;
+        public IntPtr  WidthInBytes;
+        public IntPtr dstArray;
+        public IntPtr dstDevice;
+        public IntPtr  dstHeight;
+        public IntPtr dstHost;
+        public IntPtr  dstLOD;
+        public CudaMemoryType dstMemoryType;
+        public IntPtr  dstPitch;
+        public IntPtr  dstXInBytes;
+        public IntPtr  dstY;
+        public IntPtr  dstZ;
+        public IntPtr reserved0;
+        public IntPtr reserved1;
+        public IntPtr srcArray;
+        public IntPtr srcDevice;
+        public IntPtr  srcHeight;
+        public IntPtr srcHost;
+        public IntPtr  srcLOD;
+        public CudaMemoryType srcMemoryType;
+        public IntPtr  srcPitch;
+        public IntPtr  srcXInBytes;
+        public IntPtr  srcY;
+        public IntPtr  srcZ;
+
     }
 
     static unsafe class CudaNativeMethods
@@ -140,9 +181,19 @@ namespace ILGPU.SharpDX.Cuda
             [Out] out CudaArrayDescriptor descriptor,
             [In] IntPtr cudaArray);
 
+        [DllImport(CudaDriverLibName, EntryPoint = "cuArray3DGetDescriptor_v2")]
+        public static extern CudaError cuArray3DGetDescriptor(
+            [Out] out CudaArray3DDescriptor descriptor,
+            [In] IntPtr cudaArray);
+
         [DllImport(CudaDriverLibName, EntryPoint = "cuMemcpy2D_v2")]
         public static extern CudaError cuMemcpy2D(
             ref CudaMemcpy2DArgs args);
+
+        
+        [DllImport(CudaDriverLibName, EntryPoint = "cuMemcpy3D_v2")]
+        public static extern CudaError cuMemcpy3D(
+            ref CudaMemcpy3DArgs args);
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "Cuda-array")]
         public static int GetByteSize(CudaArrayFormat format)
