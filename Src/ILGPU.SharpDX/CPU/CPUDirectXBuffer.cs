@@ -24,11 +24,11 @@ namespace ILGPU.SharpDX.CPU
     /// </summary>
     /// <typeparam name="T">The element type.</typeparam>
     public sealed class CPUDirectXBuffer<T> : DirectXBuffer<T>, ICPUDirectXBuffer
-        where T : struct
+        where T : unmanaged
     {
         #region Instance
 
-        private MemoryBuffer<T, Index> cpuMemory;
+        private MemoryBuffer<T, Index1> cpuMemory;
         private Buffer stagingBuffer;
         private DataBox box;
 
@@ -48,7 +48,7 @@ namespace ILGPU.SharpDX.CPU
             DirectXViewFlags viewFlags)
             : base(accelerator, d3dDevice, buffer, bufferFlags, viewFlags)
         {
-            cpuMemory = Accelerator.Allocate<T, Index>(Length);
+            cpuMemory = Accelerator.Allocate<T, Index1>(Length);
 
             var desc = new BufferDescription()
             {
@@ -128,8 +128,8 @@ namespace ILGPU.SharpDX.CPU
         {
             base.Dispose(disposing);
 
-            Dispose(ref stagingBuffer);
-            Dispose(ref cpuMemory);
+            stagingBuffer.Dispose();
+            cpuMemory.Dispose();
         }
 
         #endregion

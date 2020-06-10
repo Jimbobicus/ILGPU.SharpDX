@@ -135,8 +135,8 @@ namespace ILGPU.SharpDX
         /// <summary cref="ArrayViewSource.GetAsRawArray(AcceleratorStream, Index, Index)"/>
         protected override ArraySegment<byte> GetAsRawArray(
             AcceleratorStream stream,
-            Index byteOffset,
-            Index byteExtent) =>
+            Index1 byteOffset,
+            Index1 byteExtent) =>
             throw new NotSupportedException();
 
         /// <summary cref="IMemoryBuffer.GetAsRawArray(AcceleratorStream)"/>
@@ -168,8 +168,7 @@ namespace ILGPU.SharpDX
     /// Represents an abstract interop buffer for elements of type T for DX interop.
     /// </summary>
     /// <typeparam name="T">The element type.</typeparam>
-    public abstract class DirectXBuffer<T> : DirectXBuffer
-        where T : struct
+    public abstract class DirectXBuffer<T> : DirectXBuffer where T : unmanaged
     {
         #region Constants
 
@@ -282,7 +281,7 @@ namespace ILGPU.SharpDX
             base.Dispose(disposing);
 
             if ((BufferFlags & DirectXBufferFlags.DisposeBuffer) != 0)
-                Dispose(ref buffer);
+                buffer.Dispose();
         }
 
         #endregion
