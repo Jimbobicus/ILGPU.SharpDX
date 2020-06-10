@@ -29,7 +29,7 @@ namespace ILGPU.SharpDX.Cuda
         private IntPtr cudaGraphicsResource;
         private IntPtr cudaArray;
 
-        private CudaArrayDescriptor desc;
+        private CudaArray3DDescriptor desc;
         private int pixelByteSize;
 
         /// <summary>
@@ -89,11 +89,11 @@ namespace ILGPU.SharpDX.Cuda
             if (buffer == null)
             {
                 CudaException.ThrowIfFailed(
-                    CudaNativeMethods.cuArrayGetDescriptor(out desc, cudaArray));
+                    CudaNativeMethods.cuArray3DGetDescriptor(out desc, cudaArray));
 
                 pixelByteSize = CudaNativeMethods.GetByteSize(desc.arrayFormat) * desc.numChannels;
                 buffer = Accelerator.Allocate<byte>(
-                    desc.width.ToInt32() * desc.height.ToInt32() * pixelByteSize);
+                    desc.width.ToInt32() * desc.height.ToInt32() * desc.depth.ToInt32() * pixelByteSize);
             }
 
             Debug.Assert(pixelByteSize > 0);
@@ -101,20 +101,24 @@ namespace ILGPU.SharpDX.Cuda
             if (ViewFlags != DirectXViewFlags.WriteDiscard)
             {
                 // Copy texture data to buffer
-                var args = new CudaMemcpy2DArgs()
+                var args = new CudaMemcpy3DArgs()
                 {
                     dstDevice = buffer.NativePtr,
                     dstMemoryType = CudaMemoryType.Device,
 
                     srcArray = cudaArray,
+                    srcXInBytes = new IntPtr(desc.width.ToInt32() * pixelByteSize),
+                    srcY = desc.height,
+                    srcZ = desc.depth,
                     srcMemoryType = CudaMemoryType.Array,
 
                     WidthInBytes = new IntPtr(desc.width.ToInt32() * pixelByteSize),
                     Height = desc.height,
+                    Depth = desc.depth
                 };
 
                 CudaException.ThrowIfFailed(
-                    CudaNativeMethods.cuMemcpy2D(ref args));
+                    CudaNativeMethods.cuMemcpy3D(ref args));
             }
 
             return buffer.NativePtr;
@@ -127,20 +131,24 @@ namespace ILGPU.SharpDX.Cuda
             if (ViewFlags != DirectXViewFlags.ReadOnly)
             {
                 // Copy buffer data to texture
-                var args = new CudaMemcpy2DArgs()
+                var args = new CudaMemcpy3DArgs()
                 {
                     srcDevice = buffer.NativePtr,
                     srcMemoryType = CudaMemoryType.Device,
 
                     dstArray = cudaArray,
+                    dstXInBytes = new IntPtr(desc.width.ToInt32() * pixelByteSize),
+                    dstY = desc.height,
+                    dstZ = desc.depth,
                     dstMemoryType = CudaMemoryType.Array,
 
                     WidthInBytes = new IntPtr(desc.width.ToInt32() * pixelByteSize),
                     Height = desc.height,
+                    Depth = desc.depth
                 };
 
                 CudaException.ThrowIfFailed(
-                    CudaNativeMethods.cuMemcpy2D(ref args));
+                    CudaNativeMethods.cuMemcpy3D(ref args));
             }
             cudaArray = IntPtr.Zero;
         }

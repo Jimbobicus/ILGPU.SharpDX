@@ -102,7 +102,7 @@ namespace ILGPU.SharpDX.CPU
             box = context.MapSubresource(stagingTexture, 0, mapMode, MapFlags.None);
 
             // Reserve enough space
-            var lengthInBytes = box.SlicePitch;
+            var lengthInBytes = box.SlicePitch * stagingTexture.Description.ArraySize;
             EnsureSpace(lengthInBytes);
 
             if (ViewFlags != DirectXViewFlags.WriteDiscard)
